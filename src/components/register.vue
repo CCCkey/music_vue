@@ -7,21 +7,21 @@
 				</div>
 				<div class="form-group">
 					<label for="name">帐号:</label>
-					<input id="name" type="text"/>
+					<input id="name" type="text" required v-model="user"/>
 				</div>               
 				<div class="form-group">
 					<label for="email">邮箱:</label>
-					<input id="email" type="email"/>
+					<input id="email" type="email" required v-model="email"/>
 				</div>
 				<div class="form-group">
 					<label for="password">密码:</label>
-					<input id="password" type="password"/>
+					<input id="password" type="password" required v-model="password"/>
 				</div>
 				<div class="form-group">
 					<label for="re_password">确认密码:</label>
-					<input id="re_password" type="password"/>
+					<input id="re_password" type="password" v-model="re_password"/>
 				</div>
-				<input id="reg_btn" type="submit" value="注册"/>
+				<input id="reg_btn" type="button" value="注册" @click="commit()"/>
 			</form>
 		</div> 
 </template>
@@ -30,7 +30,20 @@
 export default {
   data () {
     return {
+		user:"",
+		password:"",
+		email:"",
+		re_password:""
     }
+  },
+  methods: {
+	  commit(){
+		  if(this.password == this.re_password) {
+
+		  }else {
+			  alert("两次输入密码不一致")
+		  }
+	  }
   }
 }
 </script>
@@ -45,9 +58,10 @@ export default {
 }	
 form{
 	width: 400px;
-	margin: 100px auto;
+	margin: 50px auto;
 	padding: 30px;
 	background-color: rgba(19, 35, 47, 0.6);
+	border-radius: 10px;
 }
 .form-group{
 	padding: 20px 0px;	

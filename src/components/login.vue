@@ -7,13 +7,13 @@
 				</div>
 				<div class="form-group">
 					<label for="account">帐号:</label>
-					<input id="account" type="text"/>
+					<input id="account" type="text" v-model="user_account" required/>
 				</div>
 				<div class="form-group">
 					<label for="password">密码:</label>
-					<input id="password" type="password"/>
+					<input id="password" type="password" v-model="password" required/>
 				</div>
-				<input id="log_btn" type="submit" value="登录" />
+				<input id="log_btn" type="button" value="登录" @click="login()"/>
 				<router-link id="to_register" to="/register">注册</router-link>
 			</form>
 		</div>  
@@ -23,8 +23,14 @@
 export default {
   data () {
     return {
-
+		user_account:"",
+		password:""
     }
+  },
+  methods: {
+	  login(){
+
+	  }
   }
 }
 </script>
@@ -42,6 +48,7 @@ form{
 	margin: 100px auto;
 	padding: 30px;
 	background-color: rgba(19, 35, 47, 0.6);
+	border-radius: 10px;
 }
 .form-group{
 	padding: 20px 0px;	

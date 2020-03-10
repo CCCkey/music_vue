@@ -91,9 +91,13 @@
 
 <script>
 export default {
+	created(){
+		
+	},
   data () {
     return {
-   
+		new_music_list:null,
+		music_list:null
     }
   }
 }

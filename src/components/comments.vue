@@ -29,12 +29,24 @@
 								<p>xxx:xxx</p>
 								<p>2020-03-08</p>																											
 							</li>
+							<li>
+								<p>xxx:xxx</p>
+								<p>2020-03-08</p>																											
+							</li>
+							<li>
+								<p>xxx:xxx</p>
+								<p>2020-03-08</p>																											
+							</li>
+							<li>
+								<p>xxx:xxx</p>
+								<p>2020-03-08</p>																											
+							</li>
 						</ul>
 					</div>
 	
 					<div class="add_comment" action="#" method="get">
 						<textarea id="comment" type="text" placeholder="发表评论" required spellcheck="true" rows="3"></textarea>
-						<button id="commit" type="button">确定</button>
+						<button id="commit" type="button" @click="addComments()">确定</button>
 					</div>
 				</div>							
 			</div>
@@ -46,8 +58,14 @@
 export default {
   data () {
     return {
+			comments_list:null
     }
-  }
+	},
+	methods:{
+		addComments(){
+
+		}
+	}
 }
 </script>
 

@@ -7,6 +7,9 @@ import musicPlay from '@/components/musicPlay'
 import comments from '@/components/comments'
 import adminLogin from '@/components/adminLogin'
 import adminManage from '@/components/adminManage'
+import userManage from '@/components/userManage'
+import musicManage from '@/components/musicManage'
+import commentsManage from '@/components/commentsManage'
 
 Vue.use(Router)
 
@@ -38,6 +41,19 @@ export default new Router({
     }, {
         path: '/adminmanage',
         name: 'adminManage',
-        component: adminManage
+        component: adminManage,
+        children: [{
+            path: '',
+            component: userManage
+        }, {
+            path: 'user',
+            component: userManage
+        }, {
+            path: 'music',
+            component: musicManage
+        }, {
+            path: 'comments',
+            component: commentsManage
+        }]
     }]
 })
