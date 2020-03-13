@@ -3,11 +3,12 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
+import store from './store'
 import axios from 'axios'
-import Vuex from 'vuex'
+
 import ElementUI from 'element-ui'
 Vue.use(ElementUI)
-Vue.use(Vuex)
+
 import header from './components/header'
 import footer from './components/footer'
 
@@ -19,45 +20,36 @@ Vue.config.productionTip = false
 axios.defaults.headers.post['Content-Type'] = 'application/json';
 Vue.prototype.$axios = axios
 
-// 状态管理数据存放
-let state = {
-        user: "",
-        music_list: [
-            { "id": 1, "music_name": "昨日青空", "singer": "尤长靖", "music_url": "../../static/song/尤长靖%20-%20昨日青空.mp3" },
-            { "id": 2, "music_name": "山外小楼夜听雨", "singer": "任然", "music_url": "../../static/song/任然 - 山外小楼夜听雨.mp3" }
-        ]
+// 获取ad_token方法
+
+let getCookie = function(cname) {
+    var name = cname + "=";
+    var ca = document.cookie.split(';');
+    for (var i = 0; i < ca.length; i++) {
+        var c = ca[i].trim();
+        if (c.indexOf(name) == 0) return c.substring(name.length, c.length);
     }
-    //状态管理修改方法
-const mutations = {
-        SETUSER(state, user) {
-            state.user = user;
-        },
-        SETLUSICLIST(state, music_list) {
-            state.music_list = music_list;
+    return "";
+}
+Vue.prototype.getCookie = getCookie
+
+// 设置路由拦截
+router.beforeEach((to, from, next) => {
+    if (to.meta.requireAuth) {
+        if (getCookie("user_token")) { // determine if there has token
+            /* has token*/
+            next()
+        } else {
+            /* has no token*/
+            next({
+                path: "/login",
+                query: { redirect: to.fullPath }
+            })
         }
+    } else {
+        next()
     }
-    //状态管理修改请求
-const actions = {
-    setStateUser(context, user) {
-        context.commit("SETUSER", user);
-    },
-    setStateMusicList(context, music_list) {
-        context.commit("SETLUSICLIST", music_list);
-    }
-};
-//状态管理数据获取
-const getters = {
-        getState(state) {
-            return state;
-        }
-    }
-    // 注册到Vuex的Store里面
-let store = new Vuex.Store({
-    state,
-    mutations,
-    actions,
-    getters
-});
+})
 
 /* eslint-disable no-new */
 new Vue({

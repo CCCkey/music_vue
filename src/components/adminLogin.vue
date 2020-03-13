@@ -9,7 +9,7 @@
 		<el-form label-width="80px" :model="formLabel">
 			<el-form-item label="账号" required>
 				<!-- 将输入框的值绑定在data中 -->
-				<el-input v-model="formLabel.user" placeholder="请输入内容"></el-input>
+				<el-input v-model="formLabel.username" placeholder="请输入内容"></el-input>
 			</el-form-item>
 			<el-form-item label="密码" required>
 				<!-- 将输入框的值绑定在data中 -->
@@ -17,7 +17,7 @@
 			</el-form-item>
 			<el-form-item>
 				<!-- 在登录按钮上面 绑定点击事件onSubmit -->
-				<el-button type="primary">登录</el-button>
+				<el-button type="primary" @click = 'submit'>登录</el-button>
 			</el-form-item>
 		</el-form>
   </div>
@@ -32,10 +32,27 @@ export default {
     return {
       // 定义表单中输入框的值
       formLabel: {
-        user: '',
+        username: '',
         password: '',
-      }
+      },
+	  loading: false // elementUI中的等待效果
     }
+  },
+  methods:{
+	  submit(){
+		 this.loading = true
+		// 发送axios请求请求后台登录接口
+			this.$axios.post("/api/v1/admins/login", { admin_account: this.formLabel.username, admin_password: this.formLabel.password }).then((res) => {
+				 if (res.data.code == 0) {
+					  this.loading = false
+						document.cookie = "admin_token=" + res.data.token;
+						this.$store.dispatch('setStateAdmin', res.data.data[0]);
+			 		  this.$router.push({ path : this.redirect || '/adminmanage'}) //跳转路由
+				 }
+			}).catch(() => { // 如果请求失败
+		 			 this.loading = false
+ 		 })
+	  }
   }
 }
 </script>

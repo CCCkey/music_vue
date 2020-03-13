@@ -27,13 +27,16 @@ export default new Router({
         name: 'register',
         component: register
     }, {
-        path: '/musicplay',
+        path: '/musicPlay/:id',
         name: 'musicPlay',
         component: musicPlay
     }, {
         path: '/comments',
         name: 'comments',
-        component: comments
+        meta: {
+            requireAuth: true
+        },
+        component: comments,
     }, {
         path: '/adminlogin',
         name: 'adminLogin',

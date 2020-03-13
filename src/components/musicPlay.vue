@@ -3,7 +3,7 @@
     <Header></Header>
     <div class="player_main">
       <!-- 播放器主体 -->
-      <div class="player_blur" style=""></div>
+      <div class="player_blur" :style="'background-image:url(http://localhost:3000/'+music_info.music_img_url+')'"></div>
       <!-- 模糊背景 -->
       <div class="player_content">
         <div class="music_list">
@@ -17,7 +17,11 @@
             <tr v-for="item in music_list">
               <td>{{item.music_name}}</td>
               <td>{{item.singer}}</td>
-              <td><img src="../assets/img/48/play_white.png" @click="play(item.id)"></td>
+              <router-link :to="'/musicPlay/' + item.id">
+                <td>
+                  <img src="../assets/img/48/play_white.png">
+                </td>
+              </router-link>
               <td><img src="../assets/img/48/dele.png" @click="del(item.id)"></td>
             </tr>
             <tr>
@@ -30,34 +34,13 @@
 
         <div class="music_lyric">
           <div class="music_info">
-            <h2 id="music_name">昨日青空</h2>
-            <h3 id="music_singer">尤长靖</h3>
+            <h2>{{music_info.music_name}}</h2>
+            <h3>{{music_info.singer}}</h3>
           </div>
           <div class="lyric">
+            <!-- <p>昨日青空</p>
             <p>昨日青空</p>
-            <p>昨日青空</p>
-            <p>昨日青空</p>
-            <p>昨日青空</p>
-            <p>昨日青空</p>
-            <p>昨日青空</p>
-            <p>昨日青空</p>
-            <p>昨日青空</p>
-            <p>昨日青空</p>
-            <p>昨日青空</p>
-            <p>昨日青空</p>
-            <p>昨日青空</p>
-            <p>昨日青空</p>
-            <p>昨日青空</p>
-            <p>昨日青空</p>
-            <p>昨日青空</p>
-            <p>昨日青空</p>
-            <p>昨日青空</p>
-            <p>昨日青空</p>
-            <p>昨日青空</p>
-            <p>昨日青空</p>
-            <p>昨日青空</p>
-            <p>昨日青空</p>
-            <p>昨日青空</p>
+            <p>昨日青空</p> -->
           </div>
         </div>
       </div>
@@ -66,7 +49,7 @@
     <!-- 播放器控件主体 -->
     <div class="player_controls">
       <img src="../assets/img/48/play_prev.png" alt="" class="prev" @click="playPrev(music_id)">
-      <audio controls="controls" controlsList="nodownload" ref="audio"></audio>
+      <audio controls="controls" controlsList="nodownload" ref="audio" :src="'http://localhost:3000/' + music_info.music_url"></audio>
       <img src="../assets/img/48/play_next.png" alt="" class="next" @click="playNext(music_id)">
       <div class="comment">
         <router-link to="/comments"><img src="../assets/img/48/comment.png"></router-link>
@@ -78,31 +61,56 @@
 <script>
 export default {
   created() {
-    // console.log(this.getNextId(this.music_id))
+    this.getMusicInfo();
+  },
+  watch: {
+    $route: {
+      handler() {
+        this.music_id = this.$route.params.id;
+        this.getMusicInfo();
+        //深度监听，同时也可监听到param参数变化
+      },
+      deep: true,
+    }
   },
   data() {
     return {
       music_list: this.$store.getters.getState.music_list,
       music_info: null,
-      music_id: 1
+      music_id: this.$route.params.id
     }
   },
   methods: {
     del(id) {
       this.music_list.forEach((item, i) => {
         if (item.id == id) {
-          this.music_list.splice(i, 1)
+          this.music_list.splice(i, 1);
+          this.$store.dispatch('setStateMusicList', this.music_list);
         }
       });
     },
     delAll() {
       this.music_list = null;
+      this.$store.dispatch('setStateMusicList', []);
     },
-    play(id) {
-      this.music_list.forEach((item, i) => {
-        if (item.id == id) {
-          this.$refs.audio.src = item.music_url;
-          this.$refs.audio.play();
+    getLyric() {
+      // var reader = new FileReader();
+      // reader.onload = function() {
+      //   reader.readAsText(file);
+      // }
+    },
+    getMusicInfo() {
+      this.$axios.get("/api/v1/musics/music/" + this.music_id).then((res) => {
+        if (res.data.state == 200) {
+          this.music_info = res.data.data[0];
+          this.$store.dispatch('setStateMusicInfo', this.music_info);
+          for (var i in this.music_list) {
+            if (this.music_list[i].id == this.music_info.id) {
+              return false;
+            }
+          }
+          this.music_list.push(this.music_info);
+          this.$store.dispatch('setStateMusicList', this.music_list);          
         }
       })
     },
@@ -113,10 +121,10 @@ export default {
           index = i - 1
         }
       })
-      if (index >= 0) {
-        this.$refs.audio.src = this.music_list[index].music_url;
-        this.$refs.audio.play();
+      if(index<0){
+        return false
       }
+      this.$router.push({ name: "musicPlay", params: { id: this.music_list[index].id } })
     },
     playNext(id) {
       var index;
@@ -125,13 +133,14 @@ export default {
           index = i + 1
         }
       })
-      if (index < this.music_list.length) {
-        this.$refs.audio.src = this.music_list[index].music_url;
-        this.$refs.audio.play();
+      if(index>=this.music_list.length){
+        return false
       }
+      this.$router.push({ name: "musicPlay", params: { id: this.music_list[index].id } })
     }
   }
 }
+
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

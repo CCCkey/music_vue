@@ -11,13 +11,13 @@
           <router-link to="/">首页</router-link>
         </li>
         <li>
-          <router-link to="/musicPlay">发现音乐</router-link>
+          <!-- <router-link to="/musicPlay">发现音乐</router-link> -->
         </li>
       </ul>
     </div>
     <!-- 登录 -->
     <div class="user">
-      <router-link to="/login">登录</router-link>
+      <router-link to="/login">{{user_name}}</router-link>
     </div>
   </div>
 </template>
@@ -26,9 +26,16 @@
 export default {
   data() {
     return {
-
+      user_name:"登录"
     }
-  }
+  },
+		created() {
+			// 如果userInfo中存入了用户信息就获取到user_account
+			if(this.$store.getters.getState.user_info != null){
+			// 获取状态管理中的用户名
+				this.user_name = this.$store.getters.getState.user_info.user_account
+			}
+		}
 }
 </script>
 

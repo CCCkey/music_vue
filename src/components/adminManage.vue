@@ -1,10 +1,10 @@
 <template>
   <el-container>
-    <el-header><img src="../assets/img/logo.png" alt=""></el-header>
+    <el-header><img src="../assets/img/logo.png" alt=""><span class="admin">{{admin_name}}</span></el-header>
     <el-container>
-      <el-aside width="200px">
+      <el-aside width="250px">
         <el-col>
-          <el-menu default-active="1" class="el-menu-vertical-demo" background-color="#b6d0ec" text-color="#000" active-text-color="#00f">
+          <el-menu default-active="1" class="el-menu-vertical-demo" background-color="#ebf0f5" text-color="#000" active-text-color="#00f">
             <el-menu-item index="1">
               <span slot="title"><router-link to="/adminmanage/user">用户管理</router-link></span>
             </el-menu-item>
@@ -27,7 +27,19 @@
 <script>
 import 'element-ui/lib/theme-chalk/index.css'
 export default {
-
+   // 组件的data属性
+  data () {
+    return {
+     admin_name:""
+    }
+  },
+  created() {
+    console.log(this.admin_name)
+			if(this.$store.getters.getState.admin_info != null){
+			// 获取状态管理中的用户名
+				this.admin_name = this.$store.getters.getState.admin_info.admin_account
+			}
+		}
 }
 </script>
 
@@ -42,11 +54,27 @@ export default {
 }
 
 .el-aside {
-  background-color: #b6d0ec;
+  background-color: #ebf0f5;
   text-align: center;
+  height: 630px;
+  padding-top: 15px
 }
 
 .el-menu {
   border: none;
+  font-size: 16px;
+}
+.el-menu a{
+  font-size: 16px;
+}
+.el-main {
+  padding: 20px 70px 0;
+}
+.admin {
+  float: right;
+  border: 1px solid #fff;
+  padding: 6px;
+  border-radius: 4px;
+  margin-top: 15px;
 }
 </style>
