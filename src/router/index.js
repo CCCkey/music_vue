@@ -44,18 +44,33 @@ export default new Router({
     }, {
         path: '/adminmanage',
         name: 'adminManage',
+        meta: {
+            requireAuth: true
+        },
         component: adminManage,
         children: [{
             path: '',
+            meta: {
+                requireAuth: true
+            },
             component: userManage
         }, {
             path: 'user',
+            meta: {
+                requireAuth: true
+            },
             component: userManage
         }, {
             path: 'music',
+            meta: {
+                requireAuth: true
+            },
             component: musicManage
         }, {
             path: 'comments',
+            meta: {
+                requireAuth: true
+            },
             component: commentsManage
         }]
     }]

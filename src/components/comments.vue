@@ -1,33 +1,33 @@
 <template>
-<div>
-    <Header></Header>
-    <div class="main">
-        <div class="music_info">
-            <img class="" :src="'/api'+music_info.music_img_url">
-            <div class="music_t">
-                <p>{{music_info.music_name}}</p><br />
-                <p>歌手：{{music_info.singer}}</p>
+    <div>
+        <Header></Header>
+        <div class="main">
+            <div class="music_info">
+                <img class="" :src="'http://localhost:3000/'+music_info.music_img_url">
+                <div class="music_t">
+                    <p>{{music_info.music_name}}</p><br />
+                    <p>歌手：{{music_info.singer}}</p>
+                </div>
             </div>
-        </div>
-        <div class="comments">
-            <div id="comments_list">
-                <h2>评论：</h2>
-                <ul id="list" contenteditable="false">
-                    <li v-for="item in comments_list">
-                        <p>{{item.user_account}}：{{item.content}}</p>
-                        <p>{{item.create_time}}</p>
-                    </li>
-                </ul>
-            </div>
+            <div class="comments">
+                <div id="comments_list">
+                    <h2>评论：</h2>
+                    <ul id="list" contenteditable="false">
+                        <li v-for="item in comments_list">
+                            <p>{{item.user_account}}：{{item.content}}</p>
+                            <p>{{item.create_time}}</p>
+                        </li>
+                    </ul>
+                </div>
 
-            <div class="add_comment" action="#" method="get">
-                <textarea v-model="content" type="text" placeholder="发表评论" required spellcheck="true" rows="3"></textarea>
-                <button id="commit" type="button" @click="addComments()">确定</button>
+                <div class="add_comment" action="#" method="get">
+                    <textarea v-model="content" type="text" placeholder="发表评论" required spellcheck="true" rows="3"></textarea>
+                    <button id="commit" type="button" @click="addComments()">确定</button>
+                </div>
             </div>
         </div>
+        <Footer></Footer>
     </div>
-    <Footer></Footer>
-</div>
 </template>
 
 <script>
@@ -35,20 +35,15 @@ export default {
     created() {
         // 获取登录的token
         this.token = this.getCookie("user_token");
-        this.$axios.get("/api/v1/comments/list?offset=1&limit=5").then((res) => {
-            if (res.data.state == 200) {
-                this.comments_list = res.data.data;
-                console.log(this.comments_list)
-            }
-        })
+        this.getComments()
     },
     data() {
         return {
             comments_list: null,
             token: null,
             content: "",
-			user_id: this.$store.getters.getState.user_info.id,
-			music_info:this.$store.getters.getState.music_info
+            user_id: this.$store.getters.getState.user_info.id,
+            music_info: this.$store.getters.getState.music_info
         }
     },
     methods: {
@@ -60,7 +55,17 @@ export default {
                 token: this.token
             }).then((res) => {
                 if (res.data.state == 200) {
-                    alert("评论成功")
+                    alert("评论成功");
+                    this.content = "";
+                    this.getComments()
+                }
+            })
+        },
+        getComments() {
+            this.$axios.get("/api/v1/comments/list?offset=1&limit=5").then((res) => {
+                if (res.data.state == 200) {
+                    this.comments_list = res.data.data;
+                    console.log(this.comments_list)
                 }
             })
         }

@@ -17,8 +17,7 @@ Vue.component("Footer", footer)
 
 Vue.config.productionTip = false
 
-axios.defaults.headers.post['Content-Type'] = 'application/json';
-Vue.prototype.$axios = axios
+
 
 // 获取ad_token方法
 
@@ -37,19 +36,32 @@ Vue.prototype.getCookie = getCookie
 router.beforeEach((to, from, next) => {
     if (to.meta.requireAuth) {
         if (getCookie("user_token")) { // determine if there has token
-            /* has token*/
-            next()
+            /* 用户已登录 */
+            next();
+            if (getCookie("admin_token")) {
+                /* 管理员已登录 */
+                next()
+            } else {
+                next({
+                    path: "/adminlogin",
+                    query: { redirect: to.fullPath }
+                })
+            }
         } else {
-            /* has no token*/
             next({
                 path: "/login",
                 query: { redirect: to.fullPath }
             })
         }
+
     } else {
         next()
     }
 })
+
+axios.defaults.headers.post['Content-Type'] = 'application/json';
+Vue.prototype.$axios = axios
+
 
 /* eslint-disable no-new */
 new Vue({

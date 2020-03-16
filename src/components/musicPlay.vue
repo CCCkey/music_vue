@@ -32,15 +32,15 @@
           </table>
         </div>
 
-        <div class="music_lyric">
+        <div class="music_play">
           <div class="music_info">
             <h2>{{music_info.music_name}}</h2>
             <h3>{{music_info.singer}}</h3>
           </div>
-          <div class="lyric">
-            <!-- <p>昨日青空</p>
-            <p>昨日青空</p>
-            <p>昨日青空</p> -->
+          <div class="player_disc">
+            <div :class="['player_img',isPlay ?'play':'']">
+              <img width="100%" :src="'http://localhost:3000/'+music_info.music_img_url">
+            </div>
           </div>
         </div>
       </div>
@@ -49,7 +49,7 @@
     <!-- 播放器控件主体 -->
     <div class="player_controls">
       <img src="../assets/img/48/play_prev.png" alt="" class="prev" @click="playPrev(music_id)">
-      <audio controls="controls" controlsList="nodownload" ref="audio" :src="'http://localhost:3000/' + music_info.music_url"></audio>
+      <audio controls="controls" controlsList="nodownload" id="audio1" ref="audio"></audio>
       <img src="../assets/img/48/play_next.png" alt="" class="next" @click="playNext(music_id)">
       <div class="comment">
         <router-link to="/comments"><img src="../assets/img/48/comment.png"></router-link>
@@ -61,6 +61,9 @@
 <script>
 export default {
   created() {
+    this.getMusicInfo();
+  },
+  mounted() {
     this.getMusicInfo();
   },
   watch: {
@@ -77,7 +80,8 @@ export default {
     return {
       music_list: this.$store.getters.getState.music_list,
       music_info: null,
-      music_id: this.$route.params.id
+      music_id: this.$route.params.id,
+      isPlay: false
     }
   },
   methods: {
@@ -93,24 +97,31 @@ export default {
       this.music_list = null;
       this.$store.dispatch('setStateMusicList', []);
     },
-    getLyric() {
-      // var reader = new FileReader();
-      // reader.onload = function() {
-      //   reader.readAsText(file);
-      // }
-    },
     getMusicInfo() {
       this.$axios.get("/api/v1/musics/music/" + this.music_id).then((res) => {
         if (res.data.state == 200) {
           this.music_info = res.data.data[0];
           this.$store.dispatch('setStateMusicInfo', this.music_info);
+          if (this.$refs.audio) {
+            this.$refs.audio.src = 'http://localhost:3000/' + this.music_info.music_url
+            this.$refs.audio.play();
+            let _this = this;
+            this.$refs.audio.addEventListener("play", function() {
+              //唱片旋转动画启动
+              _this.isPlay = true;
+            });
+            this.$refs.audio.addEventListener("pause", function() {
+              //唱片旋转动画停止
+              _this.isPlay = false;
+            })
+          }
           for (var i in this.music_list) {
             if (this.music_list[i].id == this.music_info.id) {
               return false;
             }
           }
           this.music_list.push(this.music_info);
-          this.$store.dispatch('setStateMusicList', this.music_list);          
+          this.$store.dispatch('setStateMusicList', this.music_list);
         }
       })
     },
@@ -121,7 +132,7 @@ export default {
           index = i - 1
         }
       })
-      if(index<0){
+      if (index < 0) {
         return false
       }
       this.$router.push({ name: "musicPlay", params: { id: this.music_list[index].id } })
@@ -133,7 +144,7 @@ export default {
           index = i + 1
         }
       })
-      if(index>=this.music_list.length){
+      if (index >= this.music_list.length) {
         return false
       }
       this.$router.push({ name: "musicPlay", params: { id: this.music_list[index].id } })
@@ -198,11 +209,10 @@ table td>img:hover {
   border-radius: 5px;
 }
 
-.music_lyric {
+.music_play {
   flex: 1;
   text-align: center;
-  height: 360px;
-  overflow: hidden;
+  height: 400px;
   margin-top: 50px;
 }
 
@@ -211,14 +221,28 @@ table td>img:hover {
   line-height: 40px;
 }
 
-.lyric {
-  width: 104%;
-  height: 100%;
-  overflow-y: scroll;
+.player_disc {
+  /* 播放器唱片效果 */
+  margin: 1% auto 2%;
+  width: 250px;
+  height: 250px;
+  background: url(../assets/img/cd.png) no-repeat center;
+  background-size: 100%;
+  position: relative;
 }
 
-.lyric p {
-  line-height: 20px;
+.player_img {
+  /* 唱片歌曲图片 */
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  position: absolute;
+  overflow: hidden;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  margin: auto;
 }
 
 .player_controls {
@@ -252,5 +276,32 @@ audio {
 .comment img {
   width: 18px;
   padding: 0 0 16px 20px;
+}
+
+
+
+
+
+
+/* 唱片播放状态 */
+
+.play {
+  animation: disc 5s linear 0s infinite;
+}
+
+
+
+
+
+
+/* 播放 画片 动画 */
+
+@keyframes disc {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 </style>

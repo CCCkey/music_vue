@@ -1,6 +1,6 @@
 <template>
   <el-container>
-    <el-header><img src="../assets/img/logo.png" alt=""><span class="admin">{{admin_name}}</span></el-header>
+    <el-header><img src="../assets/img/logo.png" alt=""><span class="admin" v-show="admin_name">{{admin_name}}</span></el-header>
     <el-container>
       <el-aside width="250px">
         <el-col>
@@ -25,7 +25,8 @@
 </template>
 
 <script>
-import 'element-ui/lib/theme-chalk/index.css'
+import 'element-ui/lib/theme-chalk/index.css';
+import { Message, MessageBox } from 'element-ui'
 export default {
    // 组件的data属性
   data () {
@@ -34,11 +35,10 @@ export default {
     }
   },
   created() {
-    console.log(this.admin_name)
 			if(this.$store.getters.getState.admin_info != null){
 			// 获取状态管理中的用户名
 				this.admin_name = this.$store.getters.getState.admin_info.admin_account
-			}
+      }
 		}
 }
 </script>
