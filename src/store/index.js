@@ -5,10 +5,10 @@ Vue.use(Vuex)
 
 // 状态管理数据存放
 let state = {
-        user_info: null,
         admin_info: null,
         music_list: [],
-        admin_info: null
+        admin_info: null,
+        admin_token: null
     }
     //状态管理数据获取
 const getters = {
@@ -18,9 +18,6 @@ const getters = {
     }
     //状态管理修改方法
 const mutations = {
-        SETUSER(state, user_info) {
-            state.user_info = user_info;
-        },
         SETMUSICLIST(state, music_list) {
             state.music_list = music_list;
         },
@@ -29,13 +26,13 @@ const mutations = {
         },
         SETADMIN(state, admin_info) {
             state.admin_info = admin_info;
+        },
+        SETADMINTOKEN(state, admin_token) {
+            state.admin_token = admin_token;
         }
     }
     //状态管理修改请求
 const actions = {
-    setStateUser(context, user) {
-        context.commit("SETUSER", user);
-    },
     setStateMusicList(context, music_list) {
         context.commit("SETMUSICLIST", music_list);
     },
@@ -44,6 +41,9 @@ const actions = {
     },
     setStateAdmin(context, admin_info) {
         context.commit("SETADMIN", admin_info);
+    },
+    setStateAdminToken(context, admin_token) {
+        context.commit("SETADMINTOKEN", admin_token);
     }
 };
 

@@ -113,10 +113,6 @@ export default {
 	line-height: 2;
 }
 
-
-
-
-
 /* 热门推荐 */
 
 .tab-title {

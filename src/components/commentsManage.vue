@@ -40,8 +40,7 @@ import { Message, MessageBox } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 export default {
 	created() { // 生命周期
-		this.admin_token = this.getCookie("admin_token");
-		console.log(this.admin_token)
+		this.admin_token = this.$store.getters.getState.admin_token;
 		this.getCommentList(this.currentPageNum)
 	},
 	watch: {

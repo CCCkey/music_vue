@@ -54,7 +54,7 @@ import { Message, MessageBox } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 export default {
 	created() { // 生命周期
-		this.admin_token = this.getCookie("admin_token");
+		this.admin_token = this.$store.getters.getState.admin_token;
 		this.getMusicList(this.currentPageNum)
 	},
 	watch: {
@@ -83,7 +83,7 @@ export default {
 		},
 		handleDelete(index, row) {
 			console.log(index, row);
-			this.$axios.delete("/api/v1/musics",{data:{ music_id: row.id, token: this.admin_token }} ).then((res) => {
+			this.$axios.delete("/api/v1/musics", { data: { music_id: row.id, token: this.admin_token } }).then((res) => {
 				if (res.data.code == 0) {
 					Message({
 						message: '删除成功',
